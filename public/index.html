@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Framework</title>
+<link rel="icon" type="image/svg+xml" href="/framework_icon_1.svg">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="auth-screen" class="auth-screen">
+  <div class="import-panel auth-panel">
+    <div class="brand auth-brand">
+      <svg width="36" height="36" viewBox="0 0 116 116" class="brand-mark">
+        <rect width="116" height="116" rx="26" fill="#1a1512"/>
+        <rect x="32" y="24" width="24" height="64" fill="#c8763a"/>
+        <rect x="64" y="24" width="24" height="28" fill="#c8763a"/>
+      </svg>
+      <span class="brand-name">Frame<em>work</em></span>
+    </div>
+
+    <h2 class="section-title" id="auth-heading">Sign in</h2>
+
+    <label class="field-label" for="auth-email">Email</label>
+    <input type="email" id="auth-email" class="text-input" placeholder="you@example.com" autocomplete="email">
+
+    <label class="field-label" for="auth-password">Password</label>
+    <input type="password" id="auth-password" class="text-input" placeholder="••••••••" autocomplete="current-password">
+
+    <div class="form-actions">
+      <button type="button" id="btn-auth-toggle-mode" class="btn-add-row">Need an account? Sign up</button>
+      <span id="auth-status" class="status-msg"></span>
+      <button type="button" id="btn-auth-submit" class="btn btn-primary">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-shell" class="hidden">
+
+<header class="app-header">
+  <div class="brand">
+    <svg width="36" height="36" viewBox="0 0 116 116" class="brand-mark">
+      <rect width="116" height="116" rx="26" fill="#1a1512"/>
+      <rect x="32" y="24" width="24" height="64" fill="#c8763a"/>
+      <rect x="64" y="24" width="24" height="28" fill="#c8763a"/>
+    </svg>
+    <span class="brand-name">Frame<em>work</em></span>
+  </div>
+
+  <nav class="main-nav">
+    <button class="nav-btn active" data-view="library" id="nav-library">Library</button>
+    <button class="nav-btn" data-view="import" id="nav-import">Import</button>
+    <button class="nav-btn" id="nav-sign-out">Sign out</button>
+  </nav>
+</header>
+
+<main class="app-main">
+
+  <!-- ===================== LIBRARY VIEW ===================== -->
+  <section id="view-library" class="view active">
+    <div class="view-toolbar">
+      <input type="text" id="library-search" placeholder="Search your projects…" class="search-input">
+      <select id="library-category" class="category-select">
+        <option value="">All categories</option>
+        <option>Woodworking</option>
+        <option>Electrical</option>
+        <option>Plumbing</option>
+        <option>Painting &amp; Finishing</option>
+        <option>Furniture</option>
+        <option>Outdoor &amp; Garden</option>
+        <option>Wall &amp; Flooring</option>
+        <option>Storage &amp; Organization</option>
+        <option>Repair</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div id="library-grid" class="project-grid"></div>
+
+    <div id="library-empty" class="empty-state hidden">
+      <p>No projects yet.</p>
+      <button class="btn btn-primary" data-view-link="import">+ Import your first project</button>
+    </div>
+  </section>
+
+  <!-- ===================== IMPORT VIEW ===================== -->
+  <section id="view-import" class="view">
+    <div class="import-panel">
+
+      <div id="import-form" class="import-form">
+        <h2 class="section-title">Import a project</h2>
+
+        <label class="field-label" for="import-url">Source URL <span class="optional">(optional)</span></label>
+        <input type="url" id="import-url" class="text-input" placeholder="https://www.tiktok.com/…">
+
+        <label class="field-label" for="import-title">Title</label>
+        <input type="text" id="import-title" class="text-input" placeholder="Auto-filled from URL, or type your own">
+
+        <label class="field-label" for="import-text">Caption / description / transcript</label>
+        <textarea id="import-text" class="text-area" rows="8" placeholder="Paste the caption, description, or transcript you copied from the video…"></textarea>
+
+        <div class="form-actions">
+          <button id="btn-extract" class="btn btn-primary">Extract project</button>
+          <span id="extract-status" class="status-msg"></span>
+        </div>
+      </div>
+
+      <!-- Draft editor, shown after extraction (also reused for editing a saved project) -->
+      <div id="import-draft" class="import-draft hidden">
+        <h2 class="section-title" id="draft-heading">Review &amp; edit</h2>
+
+        <div class="draft-row-2">
+          <div>
+            <label class="field-label">Title</label>
+            <input type="text" id="draft-title" class="text-input">
+          </div>
+          <div>
+            <label class="field-label">Category</label>
+            <select id="draft-category" class="category-select full-width"></select>
+          </div>
+        </div>
+
+        <div class="draft-row-3">
+          <div>
+            <label class="field-label">Difficulty</label>
+            <select id="draft-difficulty" class="category-select full-width">
+              <option value="beginner">beginner</option>
+              <option value="intermediate">intermediate</option>
+              <option value="advanced">advanced</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Est. time</label>
+            <input type="text" id="draft-time" class="text-input" placeholder="2–3 hours">
+          </div>
+          <div>
+            <label class="field-label">Est. cost</label>
+            <input type="text" id="draft-cost" class="text-input" placeholder="$40–60">
+          </div>
+        </div>
+
+        <div class="draft-list-block">
+          <div class="draft-list-header">
+            <label class="field-label">Tools</label>
+            <button type="button" class="btn-add-row" data-target="tools">+ Add</button>
+          </div>
+          <div id="draft-tools-list" class="draft-list"></div>
+        </div>
+
+        <div class="draft-list-block">
+          <div class="draft-list-header">
+            <label class="field-label">Materials</label>
+            <button type="button" class="btn-add-row" data-target="materials">+ Add</button>
+          </div>
+          <div id="draft-materials-list" class="draft-list"></div>
+        </div>
+
+        <div class="draft-list-block">
+          <div class="draft-list-header">
+            <label class="field-label">Steps</label>
+            <button type="button" class="btn-add-row" data-target="steps">+ Add</button>
+          </div>
+          <div id="draft-steps-list" class="draft-list"></div>
+        </div>
+
+        <div class="draft-list-block">
+          <label class="field-label">Tags</label>
+          <div id="draft-tags-row" class="tag-input-row">
+            <input type="text" id="draft-tag-input" class="tag-input" placeholder="+ tag">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="btn-discard" class="btn btn-secondary">Discard</button>
+          <button type="button" id="btn-save" class="btn btn-primary">Save to library</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== DETAIL VIEW ===================== -->
+  <section id="view-detail" class="view">
+    <div class="detail-panel">
+
+      <button class="btn-back" id="btn-back-to-library">Back to library</button>
+
+      <div class="detail-header">
+        <div>
+          <span id="detail-badge" class="badge">Category</span>
+          <h2 class="detail-title" id="detail-title"></h2>
+          <a href="#" id="detail-source-link" class="source-link" target="_blank" rel="noopener" hidden>View original source</a>
+        </div>
+        <div class="detail-actions">
+          <button id="btn-edit-project" class="btn btn-secondary">Edit</button>
+          <button id="btn-delete-project" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+
+      <div id="detail-meta-row" class="detail-meta-row"></div>
+
+      <div class="detail-columns">
+        <div class="detail-col">
+          <h3 class="block-title">Tools</h3>
+          <ul id="detail-tools" class="plain-list"></ul>
+        </div>
+
+        <div class="detail-col">
+          <h3 class="block-title">Materials</h3>
+          <ul id="detail-materials" class="checklist"></ul>
+        </div>
+      </div>
+
+      <div class="detail-col detail-steps">
+        <h3 class="block-title">Steps</h3>
+        <ol id="detail-steps" class="checklist"></ol>
+      </div>
+
+      <div class="detail-col">
+        <h3 class="block-title">Tags</h3>
+        <div id="detail-tags" class="tag-row"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
