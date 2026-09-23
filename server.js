@@ -8,6 +8,8 @@ import { fetchOEmbed } from "./lib/oembed.js";
 import { fetchYoutubeDescription } from "./lib/youtubeFetch.js";
 import { requireAuth } from "./lib/auth.js";
 import { checkAndIncrementDailyUsage, DAILY_LIMIT } from "./lib/usage.js";
+import { sendWelcomeEmail } from "./lib/email.js";
+import { supabaseAdmin } from "./lib/supabaseAdmin.js";
 import * as store from "./lib/store.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -45,6 +47,16 @@ app.get("/api/oembed", async (req, res) => {
   const url = req.query.url;
   const [meta, description] = await Promise.all([fetchOEmbed(url), fetchYoutubeDescription(url)]);
   res.json({ ...meta, description });
+});
+
+// Best-effort welcome email, unrelated to Supabase's own (disabled) email
+// confirmation - the mobile app calls this once, right after a successful
+// signup. Looks up the address server-side from the verified token rather
+// than trusting a client-supplied email.
+app.post("/api/welcome-email", async (req, res) => {
+  const { data } = await supabaseAdmin.auth.admin.getUserById(req.userId);
+  if (data?.user?.email) sendWelcomeEmail(data.user.email);
+  res.status(204).end();
 });
 
 const STATUS_BY_CODE = {

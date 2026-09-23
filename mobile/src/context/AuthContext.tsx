@@ -2,6 +2,7 @@ import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { supabase } from "@/lib/supabase";
+import { sendWelcomeEmail } from "@/lib/api";
 
 type AuthContextValue = {
   session: Session | null;
@@ -18,10 +19,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+    // A network hiccup here (e.g. DNS not yet ready right after the OS/simulator
+    // boots) must not leave loading stuck true forever - fall back to "no
+    // session" so the user reaches the sign-in screen instead of a dead spinner.
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch((error) => console.warn("getSession failed:", error))
+      .finally(() => setLoading(false));
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
@@ -37,6 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string) {
     const { data, error } = await supabase.auth.signUp({ email, password });
+    // Fire-and-forget: only once the user actually has access (a session came
+    // back), never blocking signup and never surfacing a send failure to them.
+    if (!error && data.session) sendWelcomeEmail().catch(() => {});
     return { error: error?.message ?? null, needsConfirmation: !error && !data.session };
   }
 

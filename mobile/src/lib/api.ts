@@ -107,3 +107,7 @@ export function toggleMaterial(id: string, index: number): Promise<Project> {
 export function deleteProject(id: string): Promise<null> {
   return authedFetch(`/api/projects/${id}`, { method: "DELETE" });
 }
+
+export function sendWelcomeEmail(): Promise<null> {
+  return authedFetch("/api/welcome-email", { method: "POST" });
+}
