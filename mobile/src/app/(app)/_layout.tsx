@@ -62,7 +62,9 @@ function ShareIntentListener() {
   useEffect(() => {
     if (!navState?.key || !hasShareIntent) return;
 
-    setPendingShare(shareIntent.webUrl ?? null, shareIntent.webUrl ? null : shareIntent.text ?? null);
+    // Instagram (and others) can share a URL AND caption text together in one
+    // payload - keep both, don't let a present webUrl blank out real text.
+    setPendingShare(shareIntent.webUrl ?? null, shareIntent.text ?? null);
     resetShareIntent();
     router.push("/import");
   }, [hasShareIntent, navState?.key]);
