@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { extractProject, ExtractionError } from "./lib/extract.js";
 import { fetchOEmbed } from "./lib/oembed.js";
 import { fetchYoutubeDescription } from "./lib/youtubeFetch.js";
+import { fetchInstagramDescription } from "./lib/instagramFetch.js";
 import { requireAuth } from "./lib/auth.js";
 import { checkAndIncrementDailyUsage, DAILY_LIMIT } from "./lib/usage.js";
 import { sendWelcomeEmail } from "./lib/email.js";
@@ -45,8 +46,12 @@ app.use("/api", requireAuth);
 
 app.get("/api/oembed", async (req, res) => {
   const url = req.query.url;
-  const [meta, description] = await Promise.all([fetchOEmbed(url), fetchYoutubeDescription(url)]);
-  res.json({ ...meta, description });
+  const [meta, youtubeDescription, instagramDescription] = await Promise.all([
+    fetchOEmbed(url),
+    fetchYoutubeDescription(url),
+    fetchInstagramDescription(url),
+  ]);
+  res.json({ ...meta, description: youtubeDescription ?? instagramDescription });
 });
 
 // Best-effort welcome email, unrelated to Supabase's own (disabled) email
