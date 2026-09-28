@@ -209,6 +209,12 @@ export default function ImportScreen() {
               multiline
               numberOfLines={8}
             />
+            {/* TikTok blocks server-side fetches (confirmed: hits their CAPTCHA
+                wall), unlike YouTube/Instagram - the only caption source here
+                is what the user pastes themselves, so say so plainly. */}
+            {sourceUrl.includes("tiktok.com") && !rawText && (
+              <Text style={styles.hint}>TikTok captions can't be auto-read — paste yours above for the best results.</Text>
+            )}
           </Field>
 
           <View style={styles.actionsRow}>
@@ -423,6 +429,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontFamily: fontSerif, fontSize: 20, color: colors.black, marginBottom: 16 },
   field: { marginBottom: 14 },
   fieldLabel: { fontSize: 12, fontWeight: "600", color: colors.gray, textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 6 },
+  hint: { fontSize: 12.5, color: colors.gray, marginTop: 6 },
   input: {
     borderWidth: 1,
     borderColor: colors.line,
